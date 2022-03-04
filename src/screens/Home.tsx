@@ -41,7 +41,7 @@ function Home() {
       <h2>Balance:</h2>
       {balance && <p>{`Your account: ${balance}`}</p>}
       <nav>
-        <Link to="/send">Send tokens</Link>
+        <Link to={`/send/${account}/${balance}`}>Send tokens</Link>
       </nav>
     </div>
   );

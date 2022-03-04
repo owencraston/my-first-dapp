@@ -9,7 +9,7 @@ function App() {
     <div className="container">
     <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="send" element={<SendTransaction />} />
+        <Route path="send/:account/:balance" element={<SendTransaction />} />
       </Routes>
     </div>
   );
