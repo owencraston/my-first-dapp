@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo} from 'react';
+import React, { useEffect, useState, useMemo, useCallback} from 'react';
 import './App.css';
 import { ethers } from "ethers";
 
@@ -7,10 +7,10 @@ function App() {
   // what MetaMask injects as window.ethereum into each page
   const provider =  useMemo(() => new ethers.providers.Web3Provider(window.ethereum, "any"), [])
   const [account, setAccount] = useState<string|undefined>(undefined);
+  const [balance, setSetBalance] = useState<string|undefined>(undefined);
   
   useEffect(() => {
   const loadAccounts = async () => {
-    console.log("fetching adddress")
     // MetaMask requires requesting permission to connect users accounts
     await provider.send("eth_requestAccounts", []);
     const signer = provider.getSigner()
@@ -21,10 +21,25 @@ function App() {
     loadAccounts()
   }, [provider]);
 
+  const getBalance = useCallback(async (wallet: string) =>  {
+    const balance = await provider.getBalance(wallet);
+    // we use the code below to convert the balance from wei to eth
+    setSetBalance(ethers.utils.formatEther(balance));
+}, [provider]);
+
+  useEffect(() => {
+    if (account !== undefined) {
+      getBalance(account);
+    } 
+  }, [account, getBalance]);
+
+
   return (
     <div className="container">
-      <h1>Hello, World!</h1>
-      <p>{`Your account: ${account}`}</p>
+      <h1>Account:</h1>
+      {account && <p>{`Your account: ${account}`}</p>}
+      <h2>Balance:</h2>
+      {balance && <p>{`Your account: ${balance}`}</p>}
     </div>
   );
 }
