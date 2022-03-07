@@ -11,7 +11,7 @@ interface Props {
 }
 
 const CondfirmTransactionComponent = ({from, to, amount}: Props)  => {
-  const provider = useMemo(() => new ethers.providers.Web3Provider(window.ethereum, "any"), []);
+  const provider = useMemo(() => new ethers.providers.Web3Provider(window.ethereum), []);
   const [transactionRequest] = useTransaction(from, to, amount, provider);
   const [transactionResponse, setTransactionResponse] = useState<undefined | ethers.providers.TransactionResponse>(undefined);
 

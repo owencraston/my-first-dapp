@@ -7,30 +7,34 @@ type State = ethers.utils.Deferrable<ethers.providers.TransactionRequest> | unde
 const useTransaction = (from: string, to: string, amount: string, provider: ethers.providers.Web3Provider) : [State] => {
     const [transaction, setTransaction] = useState<State>(undefined);
     console.log('beggining transaction');
+    const gasLimit = 21000;
 
     const getNonce = useCallback(async () => {
-        const gas = await provider.getTransactionCount(from, "latest");
-        return gas;
+        console.log('getting nonce');
+        const nonce = await provider.getTransactionCount(from);
+        console.log({nonce});
+        return nonce;
     }, [from, provider]);
 
     const getGas = useCallback(async () => {
         const gas = await provider.getGasPrice()
-        return gas.toNumber;
+        console.log({gas});
+        return gas.toNumber();
     }, [provider]);
+
 
 
     useEffect(() => {
         const getTransaction = async () => {
-            const nonce = await getNonce();
             const gasPrice = await getGas();
+            const nonce = await getNonce();            
             // Creating a transaction
             const tx : State = {
                 from: from,
                 to: to,
                 value: ethers.utils.parseEther(amount),
                 nonce: nonce,
-                gasLimit: ethers.utils.hexlify(10000),
-                gasPrice: ethers.utils.hexlify(gasPrice()),
+                gasPrice: ethers.utils.hexlify(gasPrice),
             };
             setTransaction(tx);
         };

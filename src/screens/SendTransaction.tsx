@@ -17,9 +17,8 @@ type Inputs = {
     const navigate = useNavigate()
     
     const onSubmit: SubmitHandler<Inputs> = data => {
-        console.log(data)
         // path="confirm/:account/:to/:amount"
-        const url = `/confirm/:${account}/:${data.sendTo}/:${data.sendAmmount}`
+        const url = `/confirm/${account}/${data.sendTo}/${data.sendAmmount}`
         navigate(url, { replace: true });
     };
 
