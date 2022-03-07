@@ -1,36 +1,45 @@
-import React from 'react';
-import { ethers, Transaction, utils } from 'ethers';
+import React, { useEffect, useMemo, useState } from 'react';
+import { ethers } from 'ethers';
+import useTransaction from '../hooks/useTransaction';
+import { useParams } from 'react-router-dom';
+
 
 interface Props {
-    transaction: Transaction
+  from: string;
+  to: string;
+  amount: string;
 }
 
-function CondfirmTransaction({transaction}: Props) {
+const CondfirmTransactionComponent = ({from, to, amount}: Props)  => {
+  const provider = useMemo(() => new ethers.providers.Web3Provider(window.ethereum, "any"), []);
+  const [transactionRequest] = useTransaction(from, to, amount, provider);
+  const [transactionResponse, setTransactionResponse] = useState<undefined | ethers.providers.TransactionResponse>(undefined);
 
-    const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
-// get a signer wallet!
-const signer = provider.getSigner();
+  const signer = provider.getSigner();
 
-// Creating a transaction param
-// const tx = {
-//     from: DefaultAccount,
-//     to: "0x611E72c39419168FfF07F068E76a077588225798",
-//     value: ethers.utils.parseEther("0.05"),
-//     nonce: await provider.getTransactionCount(DefaultAccount, "latest"),
-//     gasLimit: ethers.utils.hexlify(10000),
-//     gasPrice: ethers.utils.hexlify(parseInt(await provider.getGasPrice())),
-// };
-
-// signer.sendTransaction(transaction).then((transaction) => {
-//     console.dir(transaction);
-//     alert("Send finished!");
-// });
+  useEffect(() => {
+      if (transactionRequest !== undefined) {
+          signer.sendTransaction(transactionRequest).then((transaction) => {
+              console.dir(transaction);
+              alert("Send finished!");
+              setTransactionResponse(transaction);
+          });
+      }
+  }, [signer, transactionRequest]);
 
   return (
-    <div className="container">
+      <div className="container">
       <h1>Confirm Transaction</h1>
-    </div>
+      {transactionResponse === undefined ? <p>Transaction is pending</p> : <p>{`Transaction confirmed: ${transactionResponse.hash}`}</p>}
+      </div>
   );
 }
+
+function CondfirmTransaction() {
+  const { account, to, amount } = useParams();
+  
+  return  (account !== undefined && to!== undefined && amount!== undefined)  ? <CondfirmTransactionComponent from={account} to={to} amount={amount} /> : null
+}
+
 
 export default CondfirmTransaction;
