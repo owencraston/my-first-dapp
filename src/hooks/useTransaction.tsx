@@ -7,18 +7,14 @@ type State = ethers.utils.Deferrable<ethers.providers.TransactionRequest> | unde
 const useTransaction = (from: string, to: string, amount: string, provider: ethers.providers.Web3Provider) : [State] => {
     const [transaction, setTransaction] = useState<State>(undefined);
     console.log('beggining transaction');
-    const gasLimit = 21000;
 
     const getNonce = useCallback(async () => {
-        console.log('getting nonce');
         const nonce = await provider.getTransactionCount(from);
-        console.log({nonce});
         return nonce;
     }, [from, provider]);
 
     const getGas = useCallback(async () => {
         const gas = await provider.getGasPrice()
-        console.log({gas});
         return gas.toNumber();
     }, [provider]);
 

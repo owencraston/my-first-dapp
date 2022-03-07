@@ -18,14 +18,14 @@ const CondfirmTransactionComponent = ({from, to, amount}: Props)  => {
   const signer = provider.getSigner();
 
   useEffect(() => {
-      if (transactionRequest !== undefined) {
+      if (transactionRequest !== undefined && transactionResponse === undefined) {
           signer.sendTransaction(transactionRequest).then((transaction) => {
               console.dir(transaction);
               alert("Send finished!");
               setTransactionResponse(transaction);
           });
       }
-  }, [signer, transactionRequest]);
+  }, [signer, transactionRequest, transactionResponse]);
 
   return (
       <div className="container">
